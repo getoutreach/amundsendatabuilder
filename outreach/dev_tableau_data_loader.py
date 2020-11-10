@@ -31,11 +31,12 @@ def create_tableau_metadata_job(*, host, neo4j, tableau, **kwargs):
         'extractor.tableau_dashboard_metadata.site_name': tableau["site_name"],
         'extractor.tableau_dashboard_metadata.tableau_personal_access_token_name': tableau["token_name"],
         'extractor.tableau_dashboard_metadata.tableau_personal_access_token_secret': tableau["token_secret"],
-        'extractor.tableau_dashboard_metadata.api_base_url': tableau["host"],
-        # 'extractor.tableau_dashboard_metadata.excluded_projects': tableau_excluded_projects,
-        # 'extractor.tableau_dashboard_metadata.cluster': tableau_dashboard_cluster,
-        # 'extractor.tableau_dashboard_metadata.database': tableau_dashboard_database,
+        'extractor.tableau_dashboard_metadata.excluded_projects': list(),
+        'extractor.tableau_dashboard_metadata.cluster': '',
+        'extractor.tableau_dashboard_metadata.database': '',
         'extractor.tableau_dashboard_metadata.transformer.timestamp_str_to_epoch.timestamp_format': "%Y-%m-%dT%H:%M:%SZ",
+        'extractor.tableau_dashboard_metadata.api_base_url': tableau["host"],
+        'extractor.tableau_dashboard_metadata.tableau_base_url': '',
         f'loader.filesystem_csv_neo4j.{FsNeo4jCSVLoader.NODE_DIR_PATH}': node_files_folder,
         f'loader.filesystem_csv_neo4j.{FsNeo4jCSVLoader.RELATION_DIR_PATH}': relationship_files_folder,
         f'loader.filesystem_csv_neo4j.{FsNeo4jCSVLoader.SHOULD_DELETE_CREATED_DIR}': True,
@@ -51,7 +52,7 @@ def create_tableau_metadata_job(*, host, neo4j, tableau, **kwargs):
     job = DefaultJob(conf=job_config,
                      task=task,
                      publisher=Neo4jCsvPublisher())
-    job.launch()
+    return job
 
 
 def create_es_publisher_job(*, elasticsearch, host, neo4j, **kwargs):
@@ -111,7 +112,7 @@ if __name__ == "__main__":
             es_data_path: /var/tmp/amundsen/search_data.json
         tableau:
             host: https://tableau.outreach-internal.com
-            site_name: Outreach General
+            site_name:
             api_version: 3.8
             token_name: api
             token_secret: KfL1PkCCSeuw2hqhu5qF8Q==:ZHAIKuPEQ2AE7v5548nrRLAUwcp5YJJD
